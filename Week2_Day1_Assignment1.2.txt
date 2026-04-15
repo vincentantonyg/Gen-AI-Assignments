@@ -1,0 +1,316 @@
+# 🚀 Enterprise Selenium Java Hybrid Framework (Maven + TestNG + Extent Reports)
+
+---
+
+## 📌 Framework Overview
+
+This framework follows:
+
+* Hybrid Design (POM + Data-Driven)
+* Maven for dependency management
+* TestNG for execution & parallel runs
+* Extent Reports for reporting
+* Scalable, maintainable, CI/CD ready structure
+
+---
+
+## 📁 Project Structure
+
+```
+selenium-framework/
+│
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   ├── base/
+│   │   │   │   └── BaseTest.java
+│   │   │   ├── drivers/
+│   │   │   │   └── DriverFactory.java
+│   │   │   ├── pages/
+│   │   │   │   └── LoginPage.java
+│   │   │   ├── utils/
+│   │   │   │   ├── ConfigReader.java
+│   │   │   │   ├── ExcelUtils.java
+│   │   │   │   ├── WaitUtils.java
+│   │   │   │   └── ScreenshotUtils.java
+│   │   │   ├── reports/
+│   │   │   │   └── ExtentManager.java
+│   │   │   └── constants/
+│   │   │       └── FrameworkConstants.java
+│   │
+│   ├── test/
+│   │   ├── java/
+│   │   │   ├── tests/
+│   │   │   │   └── LoginTest.java
+│   │   │   ├── listeners/
+│   │   │   │   └── TestListener.java
+│   │   │   └── dataproviders/
+│   │   │       └── TestDataProvider.java
+│
+├── resources/
+│   ├── config.properties
+│   ├── testdata.xlsx
+│   └── log4j2.xml
+│
+├── testng.xml
+├── pom.xml
+└── README.md
+```
+
+---
+
+## ⚙️ Step 1: Create Maven Project
+
+### pom.xml (Core Dependencies)
+
+```xml
+<dependencies>
+    <!-- Selenium -->
+    <dependency>
+        <groupId>org.seleniumhq.selenium</groupId>
+        <artifactId>selenium-java</artifactId>
+        <version>4.18.1</version>
+    </dependency>
+
+    <!-- TestNG -->
+    <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>7.9.0</version>
+        <scope>test</scope>
+    </dependency>
+
+    <!-- Extent Reports -->
+    <dependency>
+        <groupId>com.aventstack</groupId>
+        <artifactId>extentreports</artifactId>
+        <version>5.1.1</version>
+    </dependency>
+
+    <!-- Apache POI (Excel) -->
+    <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>5.2.5</version>
+    </dependency>
+
+    <!-- WebDriver Manager -->
+    <dependency>
+        <groupId>io.github.bonigarcia</groupId>
+        <artifactId>webdrivermanager</artifactId>
+        <version>5.7.0</version>
+    </dependency>
+</dependencies>
+```
+
+---
+
+## ⚙️ Step 2: Configuration File
+
+### config.properties
+
+```
+browser=chrome
+url=https://example.com
+timeout=10
+```
+
+---
+
+## ⚙️ Step 3: Driver Factory (Thread-safe for Parallel)
+
+```java
+public class DriverFactory {
+
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+    public static WebDriver getDriver() {
+        return driver.get();
+    }
+
+    public static void initDriver(String browser) {
+        if (browser.equalsIgnoreCase("chrome")) {
+            WebDriverManager.chromedriver().setup();
+            driver.set(new ChromeDriver());
+        }
+    }
+
+    public static void quitDriver() {
+        driver.get().quit();
+        driver.remove();
+    }
+}
+```
+
+---
+
+## ⚙️ Step 4: Base Test Class
+
+```java
+public class BaseTest {
+
+    @Parameters("browser")
+    @BeforeMethod
+    public void setUp(String browser) {
+        DriverFactory.initDriver(browser);
+        DriverFactory.getDriver().get(ConfigReader.get("url"));
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        DriverFactory.quitDriver();
+    }
+}
+```
+
+---
+
+## ⚙️ Step 5: Page Object Model (Example)
+
+```java
+public class LoginPage {
+
+    WebDriver driver;
+
+    public LoginPage() {
+        this.driver = DriverFactory.getDriver();
+    }
+
+    private By username = By.id("username");
+    private By password = By.id("password");
+    private By loginBtn = By.id("login");
+
+    public void login(String user, String pass) {
+        driver.findElement(username).sendKeys(user);
+        driver.findElement(password).sendKeys(pass);
+        driver.findElement(loginBtn).click();
+    }
+}
+```
+
+---
+
+## ⚙️ Step 6: Data Provider (Excel Integration)
+
+```java
+@DataProvider(name = "loginData")
+public Object[][] getData() {
+    return ExcelUtils.readData("testdata.xlsx", "Sheet1");
+}
+```
+
+---
+
+## ⚙️ Step 7: Test Class
+
+```java
+public class LoginTest extends BaseTest {
+
+    @Test(dataProvider = "loginData")
+    public void loginTest(String username, String password) {
+        LoginPage loginPage = new LoginPage();
+        loginPage.login(username, password);
+    }
+}
+```
+
+---
+
+## ⚙️ Step 8: Extent Report Manager
+
+```java
+public class ExtentManager {
+
+    private static ExtentReports extent;
+
+    public static ExtentReports getInstance() {
+        if (extent == null) {
+            extent = new ExtentReports();
+            ExtentSparkReporter reporter =
+                new ExtentSparkReporter("reports/index.html");
+            extent.attachReporter(reporter);
+        }
+        return extent;
+    }
+}
+```
+
+---
+
+## ⚙️ Step 9: TestNG Listener
+
+```java
+public class TestListener implements ITestListener {
+
+    ExtentReports extent = ExtentManager.getInstance();
+    ExtentTest test;
+
+    public void onTestStart(ITestResult result) {
+        test = extent.createTest(result.getName());
+    }
+
+    public void onTestSuccess(ITestResult result) {
+        test.pass("Test Passed");
+    }
+
+    public void onTestFailure(ITestResult result) {
+        test.fail(result.getThrowable());
+    }
+
+    public void onFinish(ITestContext context) {
+        extent.flush();
+    }
+}
+```
+
+---
+
+## ⚙️ Step 10: testng.xml (Parallel Execution)
+
+```xml
+<suite name="Suite" parallel="methods" thread-count="5">
+    <test name="Test">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="tests.LoginTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+---
+
+## 🚀 Key Enterprise Features
+
+* Thread-safe WebDriver (ThreadLocal)
+* Parallel execution support
+* Data-driven testing (Excel)
+* Scalable POM design
+* Centralized config management
+* Rich reporting (Extent)
+* Plug & play CI/CD ready
+
+---
+
+## 🔧 Future Enhancements
+
+* Retry mechanism
+* API testing integration (RestAssured)
+* Docker + Selenium Grid
+* Allure reporting integration
+* Logging with Log4j
+
+---
+
+## ✅ Conclusion
+
+This framework is:
+
+* Enterprise scalable
+* Maintainable
+* Parallel execution ready
+* Industry standard aligned
+
+---
+
+**You now have a production-ready Selenium automation framework blueprint 🚀**
