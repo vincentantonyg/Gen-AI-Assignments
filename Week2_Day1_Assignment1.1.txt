@@ -1,0 +1,256 @@
+# Test Strategy Document  
+## Guidewire PolicyCenter – Commercial Auto (Enhancement)
+
+---
+
+## 1. Document Control
+
+| Version | Date       | Author              | Description              |
+|--------|------------|---------------------|--------------------------|
+| 1.0    | 2026-04-10 | Senior Test Consultant | Initial Version          |
+
+---
+
+## 2. Introduction
+
+This document outlines the test strategy for the enhancement of **Guidewire PolicyCenter** for the **Commercial Auto Line of Business (LOB)**. The purpose is to define the testing approach, scope, methodologies, environments, and deliverables to ensure high-quality releases.
+
+---
+
+## 3. Objectives
+
+- Validate enhancements in Commercial Auto workflows
+- Ensure seamless integration with external systems
+- Minimize production defects through structured testing
+- Support Agile/Scrum delivery with monthly releases
+- Ensure business continuity and regulatory compliance
+
+---
+
+## 4. Scope of Testing
+
+### In Scope:
+- Enhancements in Commercial Auto Policy lifecycle:
+  - Submission
+  - Quoting
+  - Binding
+  - Policy Issuance
+  - Endorsements
+  - Renewals
+- Integration validation with:
+  - Rating Engines (3rd Party)
+  - Document Management Systems
+  - SAP Billing System
+
+### Out of Scope:
+- New LOB implementation
+- Legacy system full regression (outside impacted areas)
+
+---
+
+## 5. Testing Approach
+
+### 5.1 Test Levels
+
+#### Functional Testing
+- Validate business rules, UI workflows, and policy transactions
+- Coverage of all enhancement-related changes
+
+#### Integration Testing
+- Validate data exchange between PolicyCenter and:
+  - Rating Engine
+  - Document Management
+  - SAP Billing
+
+#### System Testing
+- End-to-end validation of complete policy lifecycle
+- Cross-system validation
+
+#### User Acceptance Testing (UAT)
+- Business validation of enhancements
+- Conducted by business stakeholders
+
+#### Regression Testing
+- Manual regression of impacted modules
+- Focus on critical business flows
+
+---
+
+## 6. Test Methodology
+
+- Testing follows **Agile/Scrum model**
+- Test activities aligned with sprint cycles
+- Continuous collaboration with Dev, BA, and Product Owners
+- Test case design based on:
+  - User Stories
+  - Acceptance Criteria
+  - Business Rules
+
+---
+
+## 7. Test Environment Strategy
+
+| Environment | Purpose                     |
+|------------|-----------------------------|
+| QA         | Functional & Integration Testing |
+| SIT        | System & End-to-End Testing |
+
+### Environment Details:
+- Integrated with external systems (Rating, SAP, DMS)
+- Stable environment required before test execution
+- Environment refresh aligned with release cycles
+
+---
+
+## 8. Test Data Strategy
+
+- Combination of:
+  - Synthetic test data
+  - Masked production data (if applicable)
+- Data prepared for:
+  - Policy lifecycle scenarios
+  - Integration scenarios
+- Data versioning maintained for repeatability
+
+---
+
+## 9. Test Execution Strategy
+
+### Step-by-Step Implementation:
+
+1. **Requirement Analysis**
+   - Analyze user stories and acceptance criteria
+   - Identify impacted modules
+
+2. **Test Planning**
+   - Define scope, timelines, resources
+   - Risk identification
+
+3. **Test Design**
+   - Create test scenarios and test cases
+   - Review with stakeholders
+
+4. **Test Environment Setup**
+   - Validate QA and SIT readiness
+   - Integration endpoints validation
+
+5. **Test Data Preparation**
+   - Create and validate required datasets
+
+6. **Test Execution**
+   - Execute Functional tests in QA
+   - Execute Integration tests
+   - Execute System tests in SIT
+
+7. **Defect Management**
+   - Log defects with severity and priority
+   - Track lifecycle until closure
+
+8. **Regression Testing**
+   - Execute regression suite for impacted areas
+
+9. **UAT Support**
+   - Support business users during UAT
+   - Fix validation and re-testing
+
+10. **Test Closure**
+   - Prepare test summary report
+   - Lessons learned and sign-off
+
+---
+
+## 10. Defect Management
+
+- Defects logged in defect tracking tool (e.g., JIRA)
+- Severity Levels:
+  - Critical
+  - High
+  - Medium
+  - Low
+- Daily defect triage meetings
+- SLA-based resolution tracking
+
+---
+
+## 11. Entry and Exit Criteria
+
+### Entry Criteria:
+- Requirements are signed off
+- Test environment is ready
+- Test data is available
+
+### Exit Criteria:
+- All planned test cases executed
+- Critical and High defects closed
+- UAT sign-off received
+- Test summary report completed
+
+---
+
+## 12. Risks and Mitigation
+
+| Risk | Mitigation |
+|------|-----------|
+| Integration system downtime | Use stubs/mocks where possible |
+| Incomplete requirements | Early BA involvement |
+| Environment instability | Dedicated environment support |
+| Data issues | Early data preparation and validation |
+
+---
+
+## 13. Test Deliverables
+
+- Test Strategy Document
+- Test Plan
+- Test Scenarios & Test Cases
+- Test Data
+- Defect Reports
+- Test Execution Reports
+- Test Summary Report
+
+---
+
+## 14. Roles and Responsibilities
+
+| Role | Responsibility |
+|------|---------------|
+| Test Manager | Strategy, planning, reporting |
+| Test Lead | Execution tracking, coordination |
+| Test Analyst | Test design and execution |
+| Business Users | UAT validation |
+
+---
+
+## 15. Tools
+
+- Test Management: JIRA / TestRail (as applicable)
+- Defect Tracking: JIRA
+- Documentation: Confluence
+
+---
+
+## 16. Automation Strategy
+
+- Current Phase: **Manual Testing (100%)**
+- Future Scope:
+  - Evaluate automation feasibility for regression
+  - Tool consideration (Selenium / GW Test Framework)
+
+---
+
+## 17. Release Strategy
+
+- Release Frequency: **Monthly**
+- Deployment Model: **Agile/Scrum**
+- Sprint-based delivery with incremental testing
+- Final regression before production release
+
+---
+
+## 18. Approval
+
+| Name | Role | Signature |
+|------|------|----------|
+|      |      |          |
+
+---
